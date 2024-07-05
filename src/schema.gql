@@ -1,0 +1,60 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Post {
+  id: Int!
+  title: String!
+  votes: Int
+}
+
+type Author {
+  id: Int!
+  firstName: String
+  lastName: String
+  posts: [Post!]!
+}
+
+type Query {
+  authors: [Author!]!
+  author(id: Int!): Author!
+  post(id: Int!): Post!
+  posts(id: Int!): Post!
+}
+
+type Mutation {
+  createAuthor(createAuthorInput: CreateAuthorInput!): Author!
+  updateAuthor(updateAuthorInput: UpdateAuthorInput!): Author!
+  removeAuthor(id: Int!): Author!
+  createPost(createPostInput: CreatePostInput!): Post!
+  updatePost(updatePostInput: UpdatePostInput!): Post!
+  removePost(id: Int!): Post!
+  upvotePost(upvotePostData: UpvotePostInput!): Post!
+}
+
+input CreateAuthorInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateAuthorInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreatePostInput {
+  """title"""
+  title: Int!
+}
+
+input UpdatePostInput {
+  """title"""
+  title: Int
+  id: Int!
+}
+
+input UpvotePostInput {
+  """post id"""
+  postId: Int!
+}
