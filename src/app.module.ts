@@ -7,9 +7,12 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AuthorsModule } from './authors/authors.module';
 import { PostsModule } from './posts/posts.module';
 import { cwd } from 'node:process';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmConfig } from './config/typeorm.config';
 
 @Module({
   imports: [
+    TypeOrmModule.forRoot(typeOrmConfig),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: true,

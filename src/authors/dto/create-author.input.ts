@@ -1,7 +1,9 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Int, Field, OmitType } from '@nestjs/graphql';
+import { Author } from '../entities/author.entity';
 
 @InputType()
-export class CreateAuthorInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
-}
+export class CreateAuthorInput extends OmitType(
+  Author,
+  ['id', 'posts'],
+  InputType,
+) {}

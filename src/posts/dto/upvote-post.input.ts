@@ -1,7 +1,9 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Int, Field, PartialType, PickType } from '@nestjs/graphql';
+import { Post } from '../entities/post.entity';
 
 @InputType()
-export class UpvotePostInput {
-  @Field(() => Int, { description: 'post id' })
-  postId: number;
-}
+export class UpvotePostInput extends PickType(
+  Post,
+  ['id', 'votes'],
+  InputType,
+) {}

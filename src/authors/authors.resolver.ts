@@ -1,11 +1,11 @@
 import {
-  Resolver,
-  Query,
-  Mutation,
   Args,
   Int,
-  ResolveField,
+  Mutation,
   Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 import { AuthorsService } from './authors.service';
 import { Author } from './entities/author.entity';
@@ -13,11 +13,13 @@ import { CreateAuthorInput } from './dto/create-author.input';
 import { UpdateAuthorInput } from './dto/update-author.input';
 import { Post } from '../posts/entities/post.entity';
 import { PostsService } from '../posts/posts.service';
+import { forwardRef, Inject } from '@nestjs/common';
 
 @Resolver(() => Author)
 export class AuthorsResolver {
   constructor(
     private readonly authorsService: AuthorsService,
+    @Inject(forwardRef(() => PostsService))
     private readonly postsService: PostsService,
   ) {}
 
@@ -39,10 +41,12 @@ export class AuthorsResolver {
   }
 
   @Mutation(() => Author)
-  updateAuthor(
+  async updateAuthor(
     @Args('updateAuthorInput') updateAuthorInput: UpdateAuthorInput,
   ) {
-    return this.authorsService.update(updateAuthorInput.id, updateAuthorInput);
+    const res = await this.authorsService.update(updateAuthorInput);
+    console.log(res);
+    return res;
   }
 
   @Mutation(() => Author)

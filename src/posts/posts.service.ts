@@ -1,12 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreatePostInput } from './dto/create-post.input';
 import { UpdatePostInput } from './dto/update-post.input';
 import { UpvotePostInput } from './dto/upvote-post.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Post } from './entities/post.entity';
+import { Repository } from 'typeorm';
+import { Author } from '../authors/entities/author.entity';
 
 @Injectable()
 export class PostsService {
-  create(createPostInput: CreatePostInput) {
-    return 'This action adds a new post';
+  constructor(
+    @InjectRepository(Author)
+    private readonly authorsRepository: Repository<Author>,
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
+  ) {}
+
+  async create(createPostInput: CreatePostInput) {
+    const newPost = this.postRepository.create(createPostInput);
+    newPost.authorInfo = await this.authorsRepository.findOneBy({
+      id: newPost.author,
+    });
+    return this.postRepository.save(newPost);
   }
 
   findAll(author?: any) {
@@ -25,7 +40,14 @@ export class PostsService {
     return `This action removes a #${id} post`;
   }
 
-  upvoteById(postInput: UpvotePostInput) {
-    return `This action updates a #${postInput.postId} post`;
+  async upvoteById(postInput: UpvotePostInput) {
+    const post = await this.postRepository.findOneBy({ id: postInput.id });
+    console.log(post);
+    const newPost = {
+      ...post,
+      ...postInput,
+    };
+    console.log(newPost);
+    return this.postRepository.save(newPost);
   }
 }

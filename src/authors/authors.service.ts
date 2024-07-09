@@ -1,25 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAuthorInput } from './dto/create-author.input';
 import { UpdateAuthorInput } from './dto/update-author.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Author } from './entities/author.entity';
 
 @Injectable()
 export class AuthorsService {
-  private authors = [{ id: 1, firstName: 'Hyunwoo', lastName: 'Chon' }];
+  constructor(
+    @InjectRepository(Author)
+    private authorsRepository: Repository<Author>,
+  ) {
+    this.authorsRepository = authorsRepository;
+  }
 
-  create(createAuthorInput: CreateAuthorInput) {
-    return 'This action adds a new author';
+  async create(createAuthorInput: CreateAuthorInput): Promise<Author> {
+    const newAuthor = this.authorsRepository.create(createAuthorInput);
+    const res = await this.authorsRepository.save(newAuthor);
+    console.log(res);
+    return res;
   }
 
   findAll() {
     return `This action returns all authors`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} author`;
+  async findOne(id: number) {
+    return await this.authorsRepository.findOneBy({ id });
   }
 
-  update(id: number, updateAuthorInput: UpdateAuthorInput) {
-    return `This action updates a #${id} author`;
+  async update(updateAuthorInput: UpdateAuthorInput): Promise<Author> {
+    const author = await this.authorsRepository.findOne({
+      relations: ['posts'],
+      where: { id: updateAuthorInput.id },
+    });
+
+    const newAuthor = {
+      ...author,
+      ...updateAuthorInput,
+    };
+    const res = await this.authorsRepository.save(newAuthor);
+    return res;
   }
 
   remove(id: number) {

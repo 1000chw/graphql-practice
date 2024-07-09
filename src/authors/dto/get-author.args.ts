@@ -2,7 +2,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import { MinLength } from 'class-validator';
 
 @ArgsType()
-class GetAuthorArgs {
+export class GetAuthorArgs {
   @Field({ nullable: true })
   firstName?: string;
 
